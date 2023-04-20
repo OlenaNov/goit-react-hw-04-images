@@ -1,31 +1,22 @@
-import { Component } from "react";
+import { useState } from "react";
 import { BiSearchAlt } from "react-icons/bi";
 import { Field, Form, Formik, LabelSubmit, Submit, Wrapper } from "./Searchbar.styled";
 
-class Searchbar extends Component {
+function Searchbar({ onSubmit }) {
+    const [valueQuery, setValueQuery] = useState('');
 
-    state = {
-        valueQuery: '',
-    };
-
-    handleField = e => {
+    const handleField = e => {
         const valueQuery = e.currentTarget.value;
-        this.setState({ valueQuery });
+        setValueQuery(valueQuery);
     };
 
-    handleSubmit = () => {
-        const { valueQuery } = this.state;
-        const { onSubmit } = this.props;
+    const handleSubmit = () => {
 
         const normalizedValueQuery = valueQuery.toLocaleLowerCase();
 
         onSubmit(normalizedValueQuery);
-        this.setState({ valueQuery: '', });
-
+        setValueQuery('');
     };
-
-    render () {
-        const { valueQuery } = this.state;
 
         return (
             <Wrapper>
@@ -33,7 +24,7 @@ class Searchbar extends Component {
                 initialValues={{
                     query: '',
                   }} 
-                onSubmit={this.handleSubmit} >
+                onSubmit={handleSubmit} >
                     <Form>
                         <Submit type="submit">
                             <BiSearchAlt size="2em" />
@@ -46,13 +37,12 @@ class Searchbar extends Component {
                             autoComplete="off"
                             autoFocus
                             placeholder="Search images and photos" 
-                            onChange={this.handleField}
+                            onChange={handleField}
                         />
                     </Form>
                 </Formik>
             </Wrapper>
         );
-    };
 };
 
 export default Searchbar;

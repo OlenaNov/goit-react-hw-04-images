@@ -1,37 +1,43 @@
-import React, { Component } from "react";
 import { createPortal } from "react-dom";
 import { Backdrop, ModalWrapper } from "./Modal.styled";
+import { useCallback, useEffect } from "react";
 
 const modalRoot = document.querySelector('#modal-root');
 
-export default class Modal extends Component {
+export default function Modal({ onClose, children }) {
 
-    componentDidMount() {
-        window.addEventListener('keydown', this.handleKeyDown);
-    };
-
-    componentWillUnmount() {
-        window.removeEventListener('keydown', this.handleKeyDown);
-    };
-
-    handleKeyDown = e => {
+    
+    const handleKeyDown = useCallback(e => {
 
         if(e.code === 'Escape') {
-            this.props.onClose();
+            onClose();
         };
-    };
+    }, [onClose]);
 
-    handleBackdrop = e => {
+    useEffect(() => {
+        window.addEventListener('keydown', handleKeyDown);
+        return window.removeEventListener('keydown', handleKeyDown);
+    }, [handleKeyDown]);
+
+    // componentDidMount() {
+    //     window.addEventListener('keydown', this.handleKeyDown);
+    // };
+
+    // componentWillUnmount() {
+    //     window.removeEventListener('keydown', this.handleKeyDown);
+    // };
+
+
+    const handleBackdrop = e => {
         if(e.currentTarget === e.target) {
-            this.props.onClose();
+            onClose();
         };
     };
 
-render() {
+
     return createPortal(
-        <Backdrop  onClick={this.handleBackdrop}>
-            <ModalWrapper>{this.props.children}</ModalWrapper>
+        <Backdrop  onClick={handleBackdrop}>
+            <ModalWrapper>{children()}</ModalWrapper>
         </Backdrop>,
      modalRoot);
-};
 };
